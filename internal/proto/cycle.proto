@@ -1,0 +1,42 @@
+syntax="proto3";
+
+package proto;
+
+option go_package="github.com/rcsolis/endoflife_server";
+
+// Base messages
+message Cycle{
+    string cycle = 1;
+    string releaseDate = 2;
+    string eol = 3;
+    string latest = 4;
+    string link = 5;
+    string lts = 6;
+    string support = 7;
+    string discontinued = 8;
+    string extendedSupport = 9;
+}
+
+message Language {
+    string name = 1;
+}
+
+message Empty{}
+
+// Requests
+message DetailsRequest {
+    string name = 1;
+    string version = 2;
+}
+
+// Responses
+message AllLanguagesResponse{
+    repeated Language languages = 1; 
+}
+
+// Service
+service CycleService{
+    rpc GetAllLanguages(Empty) returns(AllLanguagesResponse);
+    rpc GetAllVersions(Language) returns(stream Cycle);
+    rpc GetDetails(DetailsRequest) returns(Cycle);
+}
