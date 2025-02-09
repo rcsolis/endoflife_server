@@ -47,6 +47,9 @@ func GetAll() ([]string, error) {
  * GetAllDetails fetches all the cycle data for a specific language from the API
  */
 func GetAllDetails(language string) ([]model.LanguageCycle, error) {
+	// Clear response and details slices before fetching new data
+	model.RawResponse = make([]model.RawLanguageCycle, 0)
+	model.Details = make([]model.LanguageCycle, 0)
 	// Create the url
 	url := fmt.Sprintf("%s%s.json", baseURL, language)
 	// Make the request
