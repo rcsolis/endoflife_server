@@ -1,4 +1,4 @@
-ARG BINARY_NAME="main"
+ARG BINARY_NAME="server"
 ARG PORT="50051"
 # Builder image
 FROM golang:1.23.4-bookworm as builder
@@ -15,6 +15,7 @@ RUN make build
 
 # Release image
 FROM debian:bookworm-slim as release
+
 # Set working directory
 WORKDIR /app
 # Update and install ca-certificates
@@ -25,10 +26,15 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
 COPY --from=builder /app/.env .
 # Export environment variables from .env file
 RUN set -o allexport; source .env; set +o allexport
+RUN export $(grep -v '^#' .env | xargs -d '\n')
 # Copy the binary from the builder image
 COPY --from=builder /app/bin/ .
 # Run the binary
-RUN chmod +x /app/$BINARY_NAME
+ARG BINARY_NAME
+ARG PORT
 ENV BINARY_NAME=${BINARY_NAME}
 ENV PORT=${PORT}
-CMD ./app/${BINARY_NAME}
+# Set the binary as executable
+RUN chmod +x /app/$BINARY_NAME
+# Set container entrypoint to the environment variable
+ENTRYPOINT /app/$BINARY_NAME

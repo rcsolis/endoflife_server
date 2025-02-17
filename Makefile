@@ -29,6 +29,10 @@ dep: clean
 
 build: dep
 	@echo "==>Building binary"
+	@echo "--> Variables"
+	@echo $(BINARY_FILENAME)
+	@echo $(BINARY_NAME)
+	@echo "-->Build command"
 	go build -o bin/${BINARY_NAME} -v ./cmd/$(BINARY_FILENAME).go
 
 run: build
